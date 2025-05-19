@@ -2,7 +2,7 @@ from database.db import supabase
 
 
 class User:
-    def __init__(self, name, email, age):
+    def __init__(self, id, name, email, age):
         self.id = id
         self.name = name
         self.email = email
@@ -21,7 +21,7 @@ class User:
                 name=response.data[0]['name'],
                 email=response.data[0]['email'],
                 age=response.data[0]['age']
-            )
+            ) #returns a user object of the class
 
         except Exception as e:
             print(f"Error creating user: {str(e)}")
@@ -153,22 +153,9 @@ all_users = User.fetch_all_users()
 print(all_users)
 
 user = User.find_user_by_name('charles')
-print(user.email)
+print(user.id)
 
 
-
-    # @classmethod
-    # def fetch_all_users(self):
-    #     try:
-    #         response = (
-    #             supabase.table("users")
-    #             .select("*")
-    #             .execute()
-    #     )
-    #         return response.data
-    #     except Exception as e:
-    #         print(f"Error fetching all users: {str(e)}")
-    #         return None
     
 
 
