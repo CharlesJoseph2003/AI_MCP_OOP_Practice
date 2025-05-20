@@ -1,6 +1,6 @@
-from crypto_data import CryptoAsset
+from crypto_data import CryptoAsset, FetchAPI
 from user import User
-from database.db import supabase
+from repositories.portfolio_repository import PortfolioRepository
 
 #handles
 class Portfolio:
@@ -9,78 +9,63 @@ class Portfolio:
         self.name = user.name
 
     def check_quantity(self, asset):
-        try:
-            response = (
-                supabase.table("portfolio")
-                .select("quantity")
-                .eq("user_id", self.user_id)
-                .eq("asset", asset)
-                .execute()
-            )
-            
-            if response.data and len(response.data) > 0:
-                return response.data[0]["quantity"]
-            else:
-                print(f"No {asset} found for user {self.name}")
-                return 0
-        except Exception as e:
-            print(f"Error checking quantity: {str(e)}")
-            return 0
+        quantity = PortfolioRepository.check_asset_quantity(self.user_id, asset)
+        if quantity == 0:
+            print(f"No {asset} found for user {self.name}")
+        return quantity
     
     def add_quantity(self, asset, new_value):
         existing = self.check_quantity(asset)
         updated_value = existing + new_value
         return updated_value
-    
 
     def add_asset(self, asset, quantity):
         updated_value = self.add_quantity(asset, quantity)
-        try:
-            response = (
-                supabase.table("portfolio")
-                .upsert({"user_id": self.user_id, "asset": asset, "quantity": updated_value},
-                on_conflict="user_id,asset") #follow this syntax
-                .execute()
-            )
-            return response.data
-
-        except Exception as e:
-            print(f"Error creating user: {str(e)}")
-            return None        
+        return PortfolioRepository.add_or_update_asset(self.user_id, asset, updated_value)        
     
     def fetch_user_assets(self):
-            response = (
-                supabase.table("portfolio")
-                .select("*")
-                .eq("user_id", self.user_id)
-                .execute()
-            )
-            return response.data
-    
+        return PortfolioRepository.fetch_user_assets(self.user_id)
+            
     def fetch_singular_asset(self, asset):
-            response = (
-                supabase.table("portfolio")
-                .select("*")
-                .eq("asset", asset)
-                .execute()
-            )
-            return response.data    
+        return PortfolioRepository.fetch_asset(asset)    
 
     def delete_asset(self, asset, quantity):
-        quantity = -quantity
+        quantity = -quantity  # Convert to negative for subtraction
         updated_value = self.add_quantity(asset, quantity)
-        try:
-            response = (
-                supabase.table("portfolio")
-                .upsert({"user_id": self.user_id, "asset": asset, "quantity": updated_value},
-                on_conflict="user_id,asset") #follow this syntax
-                .execute()
-            )
-            return response.data
+        return PortfolioRepository.add_or_update_asset(self.user_id, asset, updated_value)        
+    
+    def crypto_current_price(self, user_asset):
+        """Calculate the total value of a singular asset in portfolio"""
+        crypto = self.fetch_singular_asset(user_asset)
+        asset = crypto[0]['asset'],
+        clean_asset = asset[0]
+        quantity = crypto[0]['quantity']
+  
+        fetch_api = FetchAPI()
+        crypto_asset = CryptoAsset(clean_asset, quantity, fetch_api)
+        crypto_value = crypto_asset.get_valuation()
+        return crypto_value
 
-        except Exception as e:
-            print(f"Error creating user: {str(e)}")
-            return None        
+
+    def total_portfolio_valuation(self):
+        """Calculate the total value of all assets in the user's portfolio"""
+        total_assets = self.fetch_user_assets()
+        total_value = 0
+        fetch_api = FetchAPI()
+        # Check if we have any assets
+        if not total_assets:
+            return 0
+        # Loop through each asset in the portfolio
+        for asset_data in total_assets:
+            # Get the asset symbol and quantity
+            asset_symbol = asset_data['asset']
+            quantity = asset_data['quantity']
+            # Create a CryptoAsset object for this asset
+            crypto_asset = CryptoAsset(asset_symbol, quantity, fetch_api)
+            asset_value = crypto_asset.get_valuation()
+            # Add to the total portfolio value
+            total_value += asset_value
+        return total_value
 
 
 
@@ -88,10 +73,12 @@ user1 = User(8, 'daniel', 'daniel@gmail.com', 16)
 user2 = User(12, 'hannah', 'hannah@gmail.com', 20)
 portfolio1 = Portfolio(user1)
 portfolio2 = Portfolio(user2)
-portfolio1.delete_asset('btc', 10)
-assets = portfolio1.fetch_user_assets()
-print(assets)
-print(portfolio1.fetch_singular_asset('btc'))
+# portfolio1.delete_asset('btc', 10)
+# assets = portfolio1.fetch_user_assets()
+# print(assets)
+# print(portfolio1.fetch_singular_asset('btc'))
+# print(portfolio1.crypto_current_price('eth'))
+print(portfolio1.total_portfolio_valuation())
 
 
         

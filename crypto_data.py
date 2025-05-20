@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 api_key = os.getenv("CRYPTO_API")
-print(api_key)
+# print(api_key)
 
 
 class FetchAPI():
@@ -49,7 +49,7 @@ class CryptoAsset:
     
     def get_value(self):
         self.current_price = self.fetch.get_price(self.name)
-        return self.current_price
+        return self.current_price[self.name]['usd']
 
     def get_market_cap(self):
         self.market_cap = self.get_metric('market_cap')
@@ -64,11 +64,13 @@ class CryptoAsset:
         return self.max_supply
 
     def get_valuation(self):
+        self.current_price = self.get_value()
         self.valuation = self.quantity * self.current_price
         return self.valuation
 
 fetch = FetchAPI()
 crypto = CryptoAsset('btc', 100, fetch)
+# print(crypto.get_value())
 # print(fetch.get_coin_market_data('btc'))
 # print(crypto.get_value())
 # print(crypto.get_market_cap())
