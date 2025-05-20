@@ -29,7 +29,7 @@ class FetchAPI():
     
     
 class CryptoAsset:
-    def __init__(self, name, quantity,fetch):
+    def __init__(self, name, quantity, fetch):
         self.fetch = fetch
         self.name = name
         self.quantity = quantity
@@ -69,6 +69,6 @@ class CryptoAsset:
 
 fetch = FetchAPI()
 crypto = CryptoAsset('btc', 100, fetch)
-print(fetch.get_coin_market_data('btc'))
-print(crypto.get_value())
-print(crypto.get_market_cap())
+# print(fetch.get_coin_market_data('btc'))
+# print(crypto.get_value())
+# print(crypto.get_market_cap())
