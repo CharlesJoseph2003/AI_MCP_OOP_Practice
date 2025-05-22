@@ -1,4 +1,5 @@
 from database.db import supabase
+from repositories.user_repository import UserRepository
 
 class User:
     def __init__(self, id, name, email, age):
@@ -8,20 +9,15 @@ class User:
         self.age = age
 
     @classmethod
-    def create_user(cls, name):
+    def create_user(cls, name, email, age):
         try:
-            response = (
-                supabase.table("portfolio")
-                .insert({"name": name, "email": email, "age": age})
-                .execute()
-            )
+            response = UserRepository.input_user_data(name, email, age)
             return cls(
                 id=response.data[0]['id'],
                 name=response.data[0]['name'],
                 email=response.data[0]['email'],
                 age=response.data[0]['age']
             ) #returns a user object of the class
-
         except Exception as e:
             print(f"Error creating user: {str(e)}")
             return None
@@ -30,13 +26,7 @@ class User:
     @classmethod
     def fetch_user_by_name(cls, name):
         try:
-            response = (
-                supabase.table("users")
-                .select("*")
-                .eq("name", name)
-                .execute()
-            )
-            
+            response = UserRepository.fetch_users(name)
             if response.data and len(response.data) > 0:
                 return cls(
                     id=response.data[0]['id'],
@@ -54,13 +44,7 @@ class User:
     @classmethod
     def find_user_by_email(cls, email):
         try:
-            response = (
-                supabase.table("users")
-                .select("*")
-                .eq("email", email)
-                .execute()
-            )
-            
+            response = UserRepository.find_user_by_email(email)
             if response.data and len(response.data) > 0:
                     return cls(
                         id = response.data[0]['id'],
@@ -79,12 +63,7 @@ class User:
     def update_user(self, param_to_update, new_value):
         """Update a user by their ID"""
         try:
-            response = (
-                supabase.table("users")
-                .update({param_to_update: new_value})
-                .eq("id", self.id)
-                .execute()
-            )
+            response = UserRepository.update(param_to_update, new_value)
             return response.data
         except Exception as e:
             print(f"Error updating user: {str(e)}")
@@ -101,18 +80,12 @@ class User:
             
         # Then update the user using their ID
         return self.update_user(user.id, param_to_update, new_value)
-    
 
   
     def delete(self):
         try:
-            response = (
-                supabase.table("users")
-                .delete()
-                .eq("id", self.id)
-                .execute()
-            )
-            return response.data
+            response = UserRepository.delete()
+            return response
         except Exception as e:
             print(f"Error deleting user: {str(e)}")
             return None
@@ -121,11 +94,7 @@ class User:
     @classmethod
     def fetch_all_users(cls):
         try:
-            response = (
-                supabase.table("users")
-                .select("*")
-                .execute()
-                )
+            response = UserRepository.fetch_all_users()
             return response.model_dump_json()
         except Exception as e:
             print(f"Error updating user: {str(e)}")
