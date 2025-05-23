@@ -1,7 +1,7 @@
 from models.user import User
 from models.portfolio import Portfolio
-from models.crypto_asset import CryptoAsset, FetchAPI
-from models.analytics import Analytics
+from models.crypto_asset import FetchAPI
+from services.analytics import Analytics
 
 def main():
     # Create users
@@ -18,7 +18,7 @@ def main():
 
     fetch_api = FetchAPI()
     analysis = Analytics(portfolio1, fetch_api)
-    # print(analysis.rolling_mean('btc', 3, '1mo'))
+    print(analysis.rolling_mean('btc', 3, '1mo'))
     
     # Add assets to portfolio
     # print("Adding BTC to portfolio...")

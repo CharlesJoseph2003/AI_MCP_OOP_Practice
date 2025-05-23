@@ -30,7 +30,6 @@ class Analytics:
         return crypto_asset['Volume'].rolling(window=window).mean()
 
 
-# Open       High        Low      Close   Volume  Dividends  Stock Splits  Capital Gains
 
         
 

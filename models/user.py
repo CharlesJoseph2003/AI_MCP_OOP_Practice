@@ -1,4 +1,3 @@
-# from database.db import supabase
 from repositories.user_repository import UserRepository
 
 class User:

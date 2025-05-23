@@ -1,5 +1,3 @@
-from poplib import CR
-from models import crypto_asset
 from models.crypto_asset import CryptoAsset, FetchAPI
 from models.user import User
 from repositories.portfolio_repository import PortfolioRepository
