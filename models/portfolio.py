@@ -65,3 +65,8 @@ class Portfolio:
             # Add to the total portfolio value
             total_value += asset_value
         return total_value
+
+
+# user1 = User('charles', 'charles.joseph2103@gmail.com', 21)
+# portfolio = Portfolio(user1)
+# print(portfolio.crypto_current_price('btc'))

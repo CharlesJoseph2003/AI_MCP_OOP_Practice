@@ -1,5 +1,6 @@
 import requests
 import os
+import yfinance as yf
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -67,3 +68,21 @@ class CryptoAsset:
         self.current_price = self.get_value()
         self.valuation = self.quantity * self.current_price
         return self.valuation
+    
+    def get_all_data(self):
+        historical = yf.Ticker(self.name)
+        return historical.info
+
+    def get_historical_data_period(self, period):
+        historical = yf.Ticker(self.name, )
+        return historical.history(period=period)
+        
+
+# fetch = FetchAPI()
+# crypto = CryptoAsset('btc', 100, fetch)
+# # print(crypto.get_all_data())
+# print(crypto.get_historical_data_period('1y'))
+
+
+    # def get_historical_data():
+
