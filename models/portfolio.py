@@ -1,11 +1,22 @@
+from poplib import CR
+from models import crypto_asset
 from models.crypto_asset import CryptoAsset, FetchAPI
 from models.user import User
 from repositories.portfolio_repository import PortfolioRepository
 
 class Portfolio:
-    def __init__(self, user: User): #passing the User object as a parameter to the class so we can access its attributes like user id and name
+    def __init__(self, user: User, fetch_api=None): #passing the User object as a parameter to the class so we can access its attributes like user id and name
         self.user_id = user.id
         self.name = user.name
+        self.fetch_api = FetchAPI()
+
+    def get_crypto_data(self, user_asset):
+        crypto = self.fetch_singular_asset(user_asset)
+        asset = crypto[0]['asset'],
+        clean_asset = asset[0]
+        quantity = crypto[0]['quantity']
+        crypto_asset = CryptoAsset(clean_asset, quantity, self.fetch_api)
+        return crypto_asset
 
     def check_quantity(self, asset):
         quantity = PortfolioRepository.check_asset_quantity(self.user_id, asset)
@@ -35,22 +46,24 @@ class Portfolio:
     
     def crypto_current_price(self, user_asset):
         """Calculate the total value of a singular asset in portfolio"""
-        crypto = self.fetch_singular_asset(user_asset)
-        asset = crypto[0]['asset'],
-        clean_asset = asset[0]
-        quantity = crypto[0]['quantity']
-  
-        fetch_api = FetchAPI()
-        crypto_asset = CryptoAsset(clean_asset, quantity, fetch_api)
+        crypto_asset = self.get_crypto_data(user_asset)
         crypto_value = crypto_asset.get_valuation()
         return crypto_value
 
+    def crypto_get_max_supply(self, user_asset):
+        crypto_asset = self.get_crypto_data(user_asset)
+        max_supply = crypto_asset.get_max_supply()
+        return max_supply
+
+    def crypto_get_marketcap(self, user_asset):
+        crypto_asset = self.get_crypto_data(user_asset)
+        max_supply = crypto_asset.get_market_cap()
+        return max_supply
 
     def total_portfolio_valuation(self):
         """Calculate the total value of all assets in the user's portfolio"""
         total_assets = self.fetch_user_assets()
         total_value = 0
-        fetch_api = FetchAPI()
         # Check if we have any assets
         if not total_assets:
             return 0
@@ -60,7 +73,7 @@ class Portfolio:
             asset_symbol = asset_data['asset']
             quantity = asset_data['quantity']
             # Create a CryptoAsset object for this asset
-            crypto_asset = CryptoAsset(asset_symbol, quantity, fetch_api)
+            crypto_asset = CryptoAsset(asset_symbol, quantity, self.fetch_api)
             asset_value = crypto_asset.get_valuation()
             # Add to the total portfolio value
             total_value += asset_value
