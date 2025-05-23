@@ -7,16 +7,11 @@ class UserRepository:
     def input_user_data(name, email, age):
         try:
             response = (
-                supabase.table("portfolio")
+                supabase.table("users")
                 .insert({"name": name, "email": email, "age": age})
                 .execute()
             )
-            return cls(
-                    id=response.data[0]['id'],
-                    name=response.data[0]['name'],
-                    email=response.data[0]['email'],
-                    age=response.data[0]['age']
-            ) #returns a user object of the class
+            return response.data[0] # Return the raw data
         except Exception as e:
             print(f"Error creating user: {str(e)}")
             return None
@@ -31,12 +26,7 @@ class UserRepository:
                     .execute()
                 )
             if response.data and len(response.data) > 0:
-                return cls(
-                    id=response.data[0]['id'],
-                    name=response.data[0]['name'],
-                    email=response.data[0]['email'],
-                    age=response.data[0]['age']
-            )
+                return response.data[0]
             else:
                 print(f"No user found with name: {name}")
                 return None
@@ -54,12 +44,7 @@ class UserRepository:
                 .execute()
                 )
             if response.data and len(response.data) > 0:
-                    return cls(
-                        id = response.data[0]['id'],
-                        name=response.data[0]['name'],
-                        email=response.data[0]['email'],
-                        age=response.data[0]['age']
-            )
+                return response.data[0]
             else:
                 print(f"No user found with email: {email}")
                 return None
@@ -68,12 +53,12 @@ class UserRepository:
             return None
         
     @staticmethod
-    def update(param_to_update, new_value): 
+    def update(user_id, param_to_update, new_value): 
         try:           
             response = (
                     supabase.table("users")
                     .update({param_to_update: new_value})
-                    .eq("id", self.id)
+                    .eq("id", user_id)
                     .execute()
                 )
             return response.data
@@ -81,12 +66,12 @@ class UserRepository:
             print(f"Error updating user: {str(e)}")
             return None
 
-    def delete():
+    def delete(user_id):
         try:
             response = (
                     supabase.table("users")
                     .delete()
-                    .eq("id", self.id)
+                    .eq("id", user_id)
                     .execute()
                 )
             return response

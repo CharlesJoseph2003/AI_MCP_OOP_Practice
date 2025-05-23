@@ -5,18 +5,20 @@ from models.analytics import Analytics
 
 def main():
     # Create users
-    user1 = User(8, 'daniel', 'daniel@gmail.com', 16)
-    user2 = User(12, 'hannah', 'hannah@gmail.com', 20)
-    
+    user1 = User.fetch_user_by_name('daniel')
+    user2 = User.fetch_user_by_name('hannah')
+    user3 = User.create_user('mom', 'mom@gmail.com', 45)
+    print(user1.name)
+    # print(User.fetch_all_users())
     # Create portfolios
     portfolio1 = Portfolio(user1)
     portfolio2 = Portfolio(user2)
 
-    print(portfolio1.fetch_singular_asset('btc'))
+    # print(portfolio1.fetch_singular_asset('btc'))
 
     fetch_api = FetchAPI()
     analysis = Analytics(portfolio1, fetch_api)
-    print(analysis.rolling_mean('btc', 3, '1mo'))
+    # print(analysis.rolling_mean('btc', 3, '1mo'))
     
     # Add assets to portfolio
     # print("Adding BTC to portfolio...")
