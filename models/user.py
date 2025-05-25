@@ -63,16 +63,13 @@ class User:
             print(f"Error updating user: {str(e)}")
             return None
 
-    def update_user_by_name(self, param_to_update, new_value):
-        """Update a user by their name instead of ID"""
-        try:
-            user = self.fetch_user_by_name(self.name) 
-            if user is None:
-                return None
-            return self.update_user(user.id, param_to_update, new_value)
-        except Exception as e:
-            print(f"Error updating user by name: {str(e)}")
-            return None
+    # def update_user_by_name(self, param_to_update, new_value):
+    #     """Update a user by their name instead of ID"""
+    #     try:
+    #         return self.update_user(param_to_update, new_value)
+    #     except Exception as e:
+    #         print(f"Error updating user by name: {str(e)}")
+    #         return None
 
     def delete(self):
         try:

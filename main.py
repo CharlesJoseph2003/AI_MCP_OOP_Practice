@@ -7,8 +7,11 @@ def main():
     # Create users
     user1 = User.fetch_user_by_name('daniel')
     user2 = User.fetch_user_by_name('hannah')
-    user3 = User.create_user('mom', 'mom@gmail.com', 45)
+    # user3 = User.create_user('mom', 'mom@gmail.com', 45)
     print(user1.name)
+    # user1 = User.update_user_by_name('email', 'daniel@hotmail.com')
+    user1.update_user_by_name('email', 'charles@gmail.com')
+    print(user1)
     # print(User.fetch_all_users())
     # Create portfolios
     portfolio1 = Portfolio(user1)

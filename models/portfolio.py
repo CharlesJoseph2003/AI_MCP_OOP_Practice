@@ -8,6 +8,12 @@ class Portfolio:
         self.name = user.name
         self.fetch_api = FetchAPI()
 
+    def fetch_user_assets(self):
+        return PortfolioRepository.fetch_user_assets(self.user_id)
+            
+    def fetch_singular_asset(self, asset):
+        return PortfolioRepository.fetch_asset(asset)    
+
     def get_crypto_data(self, user_asset):
         crypto = self.fetch_singular_asset(user_asset)
         asset = crypto[0]['asset'],
@@ -30,12 +36,6 @@ class Portfolio:
     def add_asset(self, asset, quantity):
         updated_value = self.add_quantity(asset, quantity)
         return PortfolioRepository.add_or_update_asset(self.user_id, asset, updated_value)        
-    
-    def fetch_user_assets(self):
-        return PortfolioRepository.fetch_user_assets(self.user_id)
-            
-    def fetch_singular_asset(self, asset):
-        return PortfolioRepository.fetch_asset(asset)    
 
     def delete_asset(self, asset, quantity):
         quantity = -quantity  # Convert to negative for subtraction
@@ -62,18 +62,13 @@ class Portfolio:
         """Calculate the total value of all assets in the user's portfolio"""
         total_assets = self.fetch_user_assets()
         total_value = 0
-        # Check if we have any assets
         if not total_assets:
             return 0
-        # Loop through each asset in the portfolio
         for asset_data in total_assets:
-            # Get the asset symbol and quantity
             asset_symbol = asset_data['asset']
             quantity = asset_data['quantity']
-            # Create a CryptoAsset object for this asset
             crypto_asset = CryptoAsset(asset_symbol, quantity, self.fetch_api)
             asset_value = crypto_asset.get_valuation()
-            # Add to the total portfolio value
             total_value += asset_value
         return total_value
 
