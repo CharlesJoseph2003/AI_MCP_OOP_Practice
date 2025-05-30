@@ -32,7 +32,7 @@ class UserUpdate(BaseModel):
 async def root():
     return {"message": "Welcome to the Crypto Portfolio API"}
 
-@app.post("/user/create/", response_model=UserResponse)
+@app.post("/create", response_model=UserResponse)
 async def create_user(user: UserCreate):
     created_user = User.create_user(user.name, user.email, user.age)
     if created_user:
@@ -45,7 +45,7 @@ async def create_user(user: UserCreate):
     raise HTTPException(status_code=400, detail="Failed to create user")
 
 
-@app.get("/user/name/{user_name}", response_model=UserResponse)
+@app.get("/{user_name}/name", response_model=UserResponse)
 async def get_user_by_name(user_name):
     user = User.fetch_user_by_name(user_name)
     if user:
@@ -57,7 +57,7 @@ async def get_user_by_name(user_name):
         )
     raise HTTPException(status_code=404, detail="User not found")
 
-@app.get("/user/email/{user_email}", response_model=UserResponse)
+@app.get("/{user_name}/email", response_model=UserResponse)
 async def get_user_by_email(user_email):
     user = User.find_user_by_email(user_email)
     if user:
@@ -69,7 +69,7 @@ async def get_user_by_email(user_email):
         )
     raise HTTPException(status_code=404, detail="User not found")
 
-@app.put("/user/update/name/{user_name}")
+@app.put("/{user_name}/update")
 async def update_user(user_name: str, user_update: UserUpdate):
     # First fetch the user by name
     user = User.fetch_user_by_name(user_name)
@@ -90,7 +90,7 @@ async def update_user(user_name: str, user_update: UserUpdate):
         age=user.age
     )
 
-@app.delete("/user/delete/{user_name}")
+@app.delete("/{user_name}/delete")
 async def delete_user(user_name: str):
     user = User.fetch_user_by_name(user_name)
     if not user:

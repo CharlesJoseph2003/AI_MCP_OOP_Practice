@@ -12,14 +12,14 @@ class Portfolio:
         return PortfolioRepository.fetch_user_assets(self.user_id)
             
     def fetch_singular_asset(self, asset):
-        return PortfolioRepository.fetch_asset(asset)    
+        return PortfolioRepository.fetch_asset(self.user_id, asset)    
 
     def get_crypto_data(self, user_asset):
+        #helper function
         crypto = self.fetch_singular_asset(user_asset)
         asset = crypto[0]['asset'],
         clean_asset = asset[0]
-        quantity = crypto[0]['quantity']
-        crypto_asset = CryptoAsset(clean_asset, quantity, self.fetch_api)
+        crypto_asset = CryptoAsset(clean_asset, self.fetch_api)
         return crypto_asset
 
     def check_quantity(self, asset):
@@ -29,6 +29,7 @@ class Portfolio:
         return quantity
     
     def add_quantity(self, asset, new_value):
+        #helper function
         existing = self.check_quantity(asset)
         updated_value = existing + new_value
         return updated_value
@@ -37,7 +38,7 @@ class Portfolio:
         updated_value = self.add_quantity(asset, quantity)
         return PortfolioRepository.add_or_update_asset(self.user_id, asset, updated_value)        
 
-    def delete_asset(self, asset, quantity):
+    def remove_asset(self, asset, quantity):
         quantity = -quantity  # Convert to negative for subtraction
         updated_value = self.add_quantity(asset, quantity)
         return PortfolioRepository.add_or_update_asset(self.user_id, asset, updated_value)        
@@ -45,18 +46,19 @@ class Portfolio:
     def crypto_current_price(self, user_asset):
         """Calculate the total value of a singular asset in portfolio"""
         crypto_asset = self.get_crypto_data(user_asset)
-        crypto_value = crypto_asset.get_valuation()
+        quantity = self.check_quantity(user_asset)
+        crypto_value = crypto_asset.get_valuation(quantity)
         return crypto_value
 
-    def crypto_get_max_supply(self, user_asset):
-        crypto_asset = self.get_crypto_data(user_asset)
-        max_supply = crypto_asset.get_max_supply()
-        return max_supply
+    # def crypto_get_max_supply(self, user_asset):
+    #     crypto_asset = self.get_crypto_data(user_asset)
+    #     max_supply = crypto_asset.get_max_supply()
+    #     return max_supply
 
-    def crypto_get_marketcap(self, user_asset):
-        crypto_asset = self.get_crypto_data(user_asset)
-        max_supply = crypto_asset.get_market_cap()
-        return max_supply
+    # def crypto_get_marketcap(self, user_asset):
+    #     crypto_asset = self.get_crypto_data(user_asset)
+    #     max_supply = crypto_asset.get_market_cap()
+    #     return max_supply
 
     def total_portfolio_valuation(self):
         """Calculate the total value of all assets in the user's portfolio"""
@@ -67,12 +69,12 @@ class Portfolio:
         for asset_data in total_assets:
             asset_symbol = asset_data['asset']
             quantity = asset_data['quantity']
-            crypto_asset = CryptoAsset(asset_symbol, quantity, self.fetch_api)
-            asset_value = crypto_asset.get_valuation()
+            crypto_asset = CryptoAsset(asset_symbol, self.fetch_api)
+            asset_value = crypto_asset.get_valuation(quantity)
             total_value += asset_value
         return total_value
 
 
 # user1 = User('charles', 'charles.joseph2103@gmail.com', 21)
 # portfolio = Portfolio(user1)
-# print(portfolio.crypto_current_price('btc'))
+# print(portfolio.fetch_user_assets())

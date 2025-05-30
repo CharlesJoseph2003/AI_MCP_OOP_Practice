@@ -22,7 +22,7 @@ class User:
         except Exception as e:
             print(f"Error creating user: {str(e)}")
             return None
-
+            
     @classmethod
     def fetch_user_by_name(cls, name):
         try:

@@ -30,10 +30,9 @@ class FetchAPI():
     
     
 class CryptoAsset:
-    def __init__(self, name, quantity, fetch):
+    def __init__(self, name, fetch):
         self.fetch = fetch
         self.name = name
-        self.quantity = quantity
         self.market_cap = None
         self.initial_price = None
         self.current_price = None
@@ -41,6 +40,10 @@ class CryptoAsset:
         self.max_supply = None
         self.valuation = None
         
+
+    def get_info(self):
+        data = self.fetch.get_coin_market_data(self.name)
+        return data
 
     def get_metric(self, metric):
         total_data = self.fetch.get_coin_market_data(self.name)
@@ -50,7 +53,20 @@ class CryptoAsset:
     
     def get_value(self):
         self.current_price = self.fetch.get_price(self.name)
-        return self.current_price[self.name]['usd']
+        # Check which currency is available and use the first one
+        if self.name in self.current_price:
+            currency_data = self.current_price[self.name]
+            # Get the first available currency
+            if 'usd' in currency_data:
+                return currency_data['usd']
+            elif 'eur' in currency_data:
+                return currency_data['eur']
+            else:
+                # Get the first currency in the dictionary
+                first_currency = next(iter(currency_data))
+                return currency_data[first_currency]
+        # If we can't get a price, return 0
+        return 0
 
     def get_market_cap(self):
         self.market_cap = self.get_metric('market_cap')
@@ -64,9 +80,9 @@ class CryptoAsset:
         self.max_supply = self.get_metric("max_supply")
         return self.max_supply
 
-    def get_valuation(self):
+    def get_valuation(self, quantity):
         self.current_price = self.get_value()
-        self.valuation = self.quantity * self.current_price
+        self.valuation = quantity * self.current_price
         return self.valuation
     
     def get_all_data(self):

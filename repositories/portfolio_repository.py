@@ -46,7 +46,7 @@ class PortfolioRepository:
         try:
             response = (
                 supabase.table("portfolio")
-                .select("*")
+                .select("asset, quantity")
                 .eq("user_id", user_id)
                 .execute()
             )
@@ -56,16 +56,17 @@ class PortfolioRepository:
             return []
     
     @staticmethod
-    def fetch_asset(asset):
-        """Fetch a specific asset from the database"""
+    def fetch_asset(user_id, asset):
+        """Fetch a specific asset for a specific user"""
         try:
             response = (
                 supabase.table("portfolio")
-                .select("*")
+                .select("asset, quantity")
+                .eq("user_id", user_id)
                 .eq("asset", asset)
                 .execute()
             )
             return response.data
         except Exception as e:
-            print(f"Error fetching asset: {str(e)}")
+            print(f"Error fetching user asset: {str(e)}")
             return []
