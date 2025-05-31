@@ -4,6 +4,10 @@ from models.crypto_asset import FetchAPI
 from services import analytics
 from services.analytics import Analytics
 
+#####################################################################
+#This main.py is for testing purposes, 
+#####################################################################
+
 def main():
     # Create users
     user1 = User.fetch_user_by_name('daniel')
