@@ -29,7 +29,7 @@ def main():
     fetch_api = FetchAPI()
     analysis = Analytics(fetch_api)
     # print(analysis.rolling_mean('btc', 3, '1mo'))
-    print(analysis.calculate_sharpe_ratio("eth"))
+    print(analysis.rolling_mean("btc", 3, "1y"))
     # Add assets to portfolio
     # print("Adding BTC to portfolio...")
     # result_btc = portfolio1.add_asset('btc', 10)
