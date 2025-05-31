@@ -122,7 +122,5 @@ async def get_asset_total_value(user_name, asset):
         value=value
     )
 
-
-
 if __name__ == "__main__":
     uvicorn.run("portfolio_routes:app", host="127.0.0.1", port=8000, reload=True)

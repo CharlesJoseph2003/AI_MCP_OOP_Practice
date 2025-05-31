@@ -1,6 +1,7 @@
 from models.user import User
 from models.portfolio import Portfolio
 from models.crypto_asset import FetchAPI
+from services import analytics
 from services.analytics import Analytics
 
 def main():
@@ -20,15 +21,15 @@ def main():
     # print(portfolio1.crypto_current_price('btc')) #5,307,900
     # print(portfolio1.crypto_current_price('eth')) #26,585.6
     # print(portfolio1.crypto_current_price('usd')) #367.8
-    print(portfolio1.add_asset("btc", 20))
+    # print(portfolio1.add_asset("btc", 20))
 
 
     # print(portfolio1.fetch_singular_asset('btc'))
 
     fetch_api = FetchAPI()
-    analysis = Analytics(portfolio1, fetch_api)
+    analysis = Analytics(fetch_api)
     # print(analysis.rolling_mean('btc', 3, '1mo'))
-    
+    print(analysis.calculate_sharpe_ratio("eth"))
     # Add assets to portfolio
     # print("Adding BTC to portfolio...")
     # result_btc = portfolio1.add_asset('btc', 10)
