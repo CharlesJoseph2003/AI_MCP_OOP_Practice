@@ -1,3 +1,10 @@
+How to clone:
+- git clone https://github.com/CharlesJoseph2003/AI_MCP_OOP_Practice.git
+- pip install -r requirements.txt
+
+
+
+
 Class Design:
 
 1. CryptoAsset
